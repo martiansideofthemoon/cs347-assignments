@@ -1,6 +1,6 @@
 Assignment 1
 
-g++ shell.cpp
+`g++ shell.c -o shell` to compile the code. Binary attached in submission. (Since the submission has some C++, it will not compile with gcc).
 
 Kalpesh Krishna - 140070017
 Kumar Ayush - 140260016
