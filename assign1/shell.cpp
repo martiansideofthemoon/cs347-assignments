@@ -11,11 +11,14 @@
 #define LIMIT 100
 
 using std::cout;
-using std::string;
-using std::endl;
-using std::list;
-using std::getline;
+using std::cerr;
 using std::cin;
+
+using std::endl;
+using std::getline;
+
+using std::string;
+using std::list;
 
 int main() {
     string command;
@@ -52,8 +55,12 @@ int main() {
             // System calls begin
             int pid = fork();
             int status = 0;
-            if (pid == 0) {
-                execv(tokens[0], tokens);
+            if (pid < 0) {
+                cerr << "Process could not be created!" << endl;
+                exit(1);
+            } else if (pid == 0) {
+                int exec_ret = execvp(tokens[0], tokens);
+                cerr << "Command failed to execute!" << endl;
                 exit(1);
             } else {
                 wait(&status);
