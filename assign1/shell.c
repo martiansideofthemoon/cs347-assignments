@@ -37,16 +37,10 @@ int main() {
             std::istringstream iss(command);
             char* tokens[LIMIT];
             string token;
-            // Since command needs to be appended by /bin/
-            bool path_found = false;
             int counter = 0;
             // Parsing command and dumping to `tokens`
             while (!iss.eof()) {
                 iss >> token;
-                if (!path_found) {
-                    token = "/bin/" + token;
-                    path_found = true;
-                }
                 tokens[counter] = new char(token.length() + 1);
                 strcpy(tokens[counter], token.c_str());
                 counter++;
