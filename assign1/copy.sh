@@ -1,8 +1,8 @@
 #!/bin/bash
-start=`date +%s`
+start=`date +%s%N`
 for i in $(seq 1 $2); do
     cp $1 files/$1$i;
 done
-end=`date +%s`
+end=`date +%s%N`
 
-echo $(($end-$start))
+bc <<< 'scale=3; ('$end'-'$start')/1000000000'
