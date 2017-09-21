@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     }
 
     c1 = fork();
-    if(c1 == 0){
+    if(c1 != 0){
         c2 = fork();
     }
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
     int killer = -1;
     while(1)
     {
-        if(c1 == 0 && c2 == 0) {
+        if(c1 != 0 && c2 != 0) {
             if (number >= N) {
                 write(fd[WRITE], &killer, sizeof(killer));
                 write(fd[WRITE], &killer, sizeof(killer));
@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
             if (!(number%2 == 0 || number%3 == 0 || number%5 == 0 || number%7 == 0 || number%11 == 0))
                 write(fd[WRITE], &number, sizeof(number));
         }
-        else if(c1 != 0 && c2 == 0) {
+        else if(c1 == 0 && c2 != 0) {
             if(read(fd[READ], &read_num, sizeof(read_num))) {
                 if(read_num==-1) _exit(0);
 
@@ -78,7 +78,7 @@ int main(int argc, char *argv[])
             }
             // printf("This is child 1 with pid %i \n", getpid());
         }
-        else if(c1 == 0 && c2 != 0) {
+        else if(c1 != 0 && c2 == 0) {
             if(read(fd[READ], &read_num, sizeof(read_num))) {
                 if(read_num==-1) _exit(0);
 
