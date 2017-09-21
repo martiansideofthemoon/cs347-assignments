@@ -70,9 +70,10 @@ int main(int argc, char *argv[])
                     if(read_num%i==0) isprime = 0;
                 }
                 
-                fflush(0);
-                if (isprime)
+                if (isprime){
                     printf("%i ", read_num);
+                    fflush(0);
+                }
                 // printf("The read number is %i \n", read_num);
             }
             // printf("This is child 1 with pid %i \n", getpid());
@@ -86,9 +87,10 @@ int main(int argc, char *argv[])
                     if(read_num%i==0) isprime = 0;
                 }
                 
-                fflush(0);
-                if (isprime)
+                if (isprime){
                     printf("%i ", read_num);
+                    fflush(0);
+                }
                 // printf("The read number is %i \n", read_num);
             }
             // printf("This is child 2 with pid %i \n", getpid());
