@@ -3,10 +3,10 @@
 #include <stdlib.h>
 
 #define NUM_THREADS 10
-#define COUNT_LIMIT 50
 
 int count[20];
 int total_count = 0;
+int COUNT_LIMIT = 50;
 
 pthread_mutex_t count_mutex;
 pthread_cond_t count_threshold_cv;
@@ -22,7 +22,7 @@ void *inc_count(void *file) {
         // TODO: Actually read from file and update coutns
         total_count++;
 
-        if(!(total_count%COUNT_LIMIT)) {
+        if(total_count==COUNT_LIMIT) {
             pthread_cond_signal(&count_threshold_cv);
         }
 
@@ -36,7 +36,7 @@ void *inc_count(void *file) {
 void *watch_count(void *dummy) {
 
     pthread_mutex_lock(&count_mutex);
-    while(total_count%COUNT_LIMIT) {
+    while(total_count<COUNT_LIMIT) {
         pthread_cond_wait(&count_threshold_cv, &count_mutex);
 
        // for(int i = 0;i<4;i++) {
@@ -45,6 +45,7 @@ void *watch_count(void *dummy) {
        //     printf("\b\t");
        // }
         printf("Signal received at count %i\n", total_count);
+        COUNT_LIMIT += 50;
     }
     pthread_mutex_unlock(&count_mutex);
     pthread_exit(NULL);
