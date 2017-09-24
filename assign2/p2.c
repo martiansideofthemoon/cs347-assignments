@@ -21,7 +21,6 @@ void *inc_count(void *_file) {
         printf("Error opening file!\n");
         pthread_exit(NULL);
     }
-    int personal_lock = 1;
     int party, local_count;
 
     pthread_mutex_lock(&count_mutex);
@@ -37,10 +36,9 @@ void *inc_count(void *_file) {
         sscanf(sentence, "%i%i", &party, &local_count);
         count[party-1] += local_count;
         total_count += local_count;
-    }
-
-    if(total_count>=COUNT_LIMIT) {
-        pthread_cond_signal(&count_threshold_cv);
+        if(total_count>=COUNT_LIMIT) {
+            pthread_cond_signal(&count_threshold_cv);
+        }
     }
 
     fclose(file);
@@ -69,7 +67,7 @@ void *watch_count(void *dummy) {
             printf("\b\t");
         }
         printf("\n");
-        COUNT_LIMIT += 50;
+        COUNT_LIMIT = 50*((total_count%50)+1);
     }
     pthread_mutex_unlock(&count_mutex);
     pthread_exit(NULL);
