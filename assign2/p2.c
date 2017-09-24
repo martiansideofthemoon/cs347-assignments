@@ -14,10 +14,9 @@ pthread_cond_t count_threshold_cv;
 
 void *inc_count(void *_file) {
 
-    //FILE *file = fopen((char*)_file,"r");
-    // TODO: This file reading failing for some reason,
-    // using a static name for now
-    FILE *file = fopen("input1.txt","r");
+    char filename[80];
+    sscanf((char*)_file, "%s", filename);
+    FILE *file = fopen(filename,"r");
     if(!file) {
         printf("Error opening file!\n");
         pthread_exit(NULL);
@@ -27,7 +26,6 @@ void *inc_count(void *_file) {
 
     pthread_mutex_lock(&count_mutex);
     //printf("This is thread modifying count from %i\n", total_count);
-    // TODO: Actually read from file and update coutns
     char sentence[80];
     fgets(sentence, sizeof(sentence), file);
     while(fgets(sentence, sizeof(sentence), file)) {
@@ -47,6 +45,11 @@ void *inc_count(void *_file) {
 
     fclose(file);
     thread_count++;
+    
+    // if last incremental thread
+    // make sure watch_count is aware
+    if(thread_count == 10)
+        pthread_cond_signal(&count_threshold_cv);
 
     pthread_mutex_unlock(&count_mutex);
     sleep(1);
@@ -67,8 +70,6 @@ void *watch_count(void *dummy) {
         }
         printf("\n");
         COUNT_LIMIT += 50;
-        // TODO: this loop not working properly, erratic behavior
-        // if(thread_count>=10)break;
     }
     pthread_mutex_unlock(&count_mutex);
     pthread_exit(NULL);
