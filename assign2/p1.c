@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
         }
         else if(c1 == 0 && c2 != 0) {
             if(read(fd1[READ], &read_num, sizeof(read_num))) {
-                if(read_num==-1) _exit(0);
+                if(read_num==-1) return 0;
 
                 int isprime = 1;
                 for(int i = 12;i<read_num;i++) {
@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
         }
         else if(c1 != 0 && c2 == 0) {
             if(read(fd2[READ], &read_num, sizeof(read_num))) {
-                if(read_num==-1) _exit(0);
+                if(read_num==-1) return 0;
 
                 int isprime = 1;
                 for(int i = 12;i<read_num;i++) {
