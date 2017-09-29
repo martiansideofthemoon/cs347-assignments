@@ -1,3 +1,4 @@
+
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -21,7 +22,6 @@ void *inc_count(void *_file) {
     }
     int party, local_count;
 
-    pthread_mutex_lock(&count_mutex);
     //printf("This is thread modifying count from %i\n", total_count);
     char sentence[80];
     fgets(sentence, sizeof(sentence), file);
@@ -32,6 +32,10 @@ void *inc_count(void *_file) {
             continue;
         }
         sscanf(sentence, "%i%i", &party, &local_count);
+
+        // we're using a common mutex for all parties to ensure that `count[]` updates
+        // synchronously. This will ensure `total_count` outputs at the correct timesteps
+        pthread_mutex_lock(&count_mutex);
         count[party-1] += local_count;
         total_count += local_count;
         if(total_count>=COUNT_LIMIT) {
@@ -43,12 +47,10 @@ void *inc_count(void *_file) {
             printf("\n");
             COUNT_LIMIT += 50;
         }
+        pthread_mutex_unlock(&count_mutex);
     }
 
     fclose(file);
-
-    pthread_mutex_unlock(&count_mutex);
-    sleep(1);
 
     pthread_exit(NULL);
 }
@@ -74,7 +76,6 @@ int main(int argc, char *argv[]) {
         exit(1);
     }
 
-    
     int iter_f = 0;
     while(fgets(filename[iter_f], sizeof(filename[iter_f]), filename_list) && iter_f < 10) {
         iter_f++;
@@ -98,7 +99,6 @@ int main(int argc, char *argv[]) {
     for(int i = 0;i<NUM_THREADS;++i) {
         pthread_join(threads[i], NULL);
     }
-    // printf("Final value of count is %i\n", count);
 
     // Printing final values
     for(int i = 0;i<4;i++) {
