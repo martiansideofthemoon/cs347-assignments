@@ -57,10 +57,6 @@ void *inc_count(void *_file) {
 
 int main(int argc, char *argv[]) {
 
-    if(argc<2){
-        perror("Give filename list as arugment\n");
-        exit(1);
-    }
     // Initialize counts
     for( int i = 0;i<20;++i ) {
         count[i] = 0;
@@ -69,7 +65,7 @@ int main(int argc, char *argv[]) {
     char filename[NUM_THREADS][80];
 
     FILE *filename_list;
-    filename_list = fopen(argv[1], "r");
+    filename_list = fopen("filename_list.txt", "r");
 
     if(!filename_list) {
         perror("No such file\n");

@@ -9,5 +9,5 @@ for j in range(10):
         output += str(np.random.randint(1, 1001)) + "\n"
         output += '\n'.join(["%s %s" % (np.random.randint(1, 21), np.random.randint(1, 6)) for i in range(entries)])
         output += '\n\n'
-    with open("input%d.txt" % j, 'w') as f:
+    with open("%d.txt" % j, 'w') as f:
         f.write(output)
