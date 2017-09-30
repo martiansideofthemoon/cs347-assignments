@@ -11,7 +11,7 @@ int total_count = 0;
 int files_left = NUM_THREADS;
 int COUNT_LIMIT = 50;
 
-pthread_mutex_t count_mutex, files_mutex;
+pthread_mutex_t count_mutex;
 pthread_cond_t count_threshold_cv, count_wait;
 
 void *inc_count(void *_file) {
@@ -53,13 +53,13 @@ void *inc_count(void *_file) {
         pthread_mutex_unlock(&count_mutex);
     }
     fclose(file);
-    pthread_mutex_lock(&files_mutex);
+    pthread_mutex_lock(&count_mutex);
     files_left -= 1;
     if (files_left == 0) {
         // Precaution to prevent infinite wait
         pthread_cond_signal(&count_threshold_cv);
     }
-    pthread_mutex_unlock(&files_mutex);
+    pthread_mutex_unlock(&count_mutex);
     pthread_exit(NULL);
 }
 
@@ -81,7 +81,7 @@ void* wait_count(void* t) {
             printf("\b\t");
         }
         // Uncomment this to prove code's correctness!
-        //printf(" - %i\n", sum);
+        // printf(" - %i\n", sum);
         printf("\n");
 
         COUNT_LIMIT += 50;
@@ -121,8 +121,6 @@ int main(int argc, char *argv[]) {
 
     // Initialize mutex and conditional variable
     pthread_mutex_init(&count_mutex, NULL);
-    pthread_mutex_init(&files_mutex, NULL);
-    pthread_cond_init(&count_wait, NULL);
     pthread_cond_init(&count_wait, NULL);
 
     // joined state
@@ -151,7 +149,6 @@ int main(int argc, char *argv[]) {
     // Clean up
     pthread_attr_destroy(&attr);
     pthread_mutex_destroy(&count_mutex);
-    pthread_mutex_destroy(&files_mutex);
     pthread_cond_destroy(&count_threshold_cv);
     pthread_cond_destroy(&count_wait);
     pthread_exit(NULL);
