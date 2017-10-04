@@ -1,4 +1,3 @@
-#include "semaphore.h"
 #include <stdlib.h>        // for srand, rand
 #include <unistd.h>
 #include "time.h"
