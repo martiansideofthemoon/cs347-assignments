@@ -119,8 +119,9 @@ int main(int argc, char *argv[]) {
     pthread_t threads[NUM_THREADS];
     pthread_attr_t attr;
 
-    // Initialize mutex and conditional variable
+    // Initialize mutex and conditional variables
     pthread_mutex_init(&count_mutex, NULL);
+    pthread_cond_init(&count_threshold_cv, NULL);
     pthread_cond_init(&count_wait, NULL);
 
     // joined state
