@@ -44,14 +44,14 @@ public:
         origin.push_back(cycle);
     }
 
-    int get_item() {
+    int get_item(int cycle) {
         int item = overflow.front();
         overflow.pop_front();
         origin.pop_front();
         if (origin.size() > 0) {
             oldest = origin.front();
         } else {
-            oldest++;
+            oldest = cycle + 1;
         }
         return item;
     }
@@ -148,7 +148,7 @@ void producer(int id) {
             if (buffer.size() == buffer_cap) continue;
 
             // This action can take place, proceed!
-            int item = producers[id].get_item();
+            int item = producers[id].get_item(cycle);
             buffer.push_back(item);
             for (int i = 0; i < PRODUCERS + CONSUMERS; i++) {
                 can_execute[i] = false;
