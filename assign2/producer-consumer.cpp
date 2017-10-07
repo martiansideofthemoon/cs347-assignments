@@ -31,15 +31,18 @@ public:
     int oldest;
 
     Producer() {
-        oldest = 0;
+        oldest = -1;
     }
 
     Producer(int i) {
         id = i;
-        oldest = 0;
+        oldest = -1;
     }
 
     void push_item(int id, int cycle) {
+        if (overflow.size() == 0) {
+            oldest = cycle;
+        }
         overflow.push_back(id);
         origin.push_back(cycle);
     }
@@ -139,8 +142,10 @@ void producer(int id) {
             // Check whether producer contains oldest item
             int oldest = -1;
             for (int i = 0; i < PRODUCERS; i++) {
-                if (oldest == -1 || producers[i].oldest < oldest) {
-                    oldest = producers[i].oldest;
+                if (producers[i].overflow.size() != 0) {
+                    if (oldest == -1 || producers[i].oldest < oldest) {
+                        oldest = producers[i].oldest;
+                    }
                 }
             }
             if (producers[id].overflow.size() == 0) continue;
@@ -232,7 +237,6 @@ void moderator() {
 
         // This is done to prevent the threads from running into next cycle of execution
         input_being_read = true;
-
         while(deadlock == false) {
             int produce_left = buffer.size();
             int overflow_size = 0;
@@ -287,10 +291,12 @@ void moderator() {
         cout << endl << endl;
         cycle++;
     }
-    input_left = false;
-    input_being_read = false;
-    // Safety check to ensure all threads finish successfully
-    pthread_cond_broadcast(&input_cv);
+    pthread_mutex_lock(&input_mutex);
+        input_left = false;
+        input_being_read = false;
+        // Safety check to ensure all threads finish successfully
+        pthread_cond_broadcast(&input_cv);
+    pthread_mutex_unlock(&input_mutex);
 }
 
 void *thread_run(void *data){
