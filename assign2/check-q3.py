@@ -5,31 +5,49 @@ import time
 
 """
 Sample input specification - (buffer_size, followed by lines of input)
-4
-1 2 1 4 0
-4 0 2 2 1
-1 4 2 2 2
-3 1 3 2 3
-1 2 1 4 0
-4 0 2 2 1
-1 4 2 2 2
-3 1 3 2 3
+8
+1 0 0 2 1
+2 4 5 1 0
+4 2 4 2 4
+3 0 5 5 1
+5 0 2 5 0
+1 2 2 0 0
+3 2 5 1 0
+5 4 3 2 3
+2 1 2 1 0
+0 0 0 41 0
+
 
 Sample output specification -
-Buffer Items: 7
-Overflow Items: 8 9 10 3 4 5
+Buffer Items:
+Overflow Items:
 
-Buffer Items: 5
-Overflow Items: 10 17 18 19 20 13 14 15 16 11 12
+Buffer Items: 7 8 3 4 9 10 11 12
+Overflow Items:
 
-Buffer Items: 17
-Overflow Items: 18 19 20 14 15 16 21 22 23
+Buffer Items: 11 12 19 20 13 21 14 15
+Overflow Items: 16 17 18 22
 
-Buffer Items: 18
-Overflow Items: 19 20 26 27 28 29 30 16 21 22 23 24 25
+Buffer Items: 14 15 22 16 17 18 23 24
+Overflow Items: 28 29 30 25 26 27
 
-Buffer Items: 18
-Overflow Items: 19 20 26 27 28 29 30 16 34 35 36 37 21 22 23 24 25 31 32 33
+Buffer Items: 18 23 24 25 26 28 29 27
+Overflow Items: 30 33 34 35 36 37 31 32
+
+Buffer Items: 18 23 24 25 26 28 29 27
+Overflow Items: 30 33 34 35 36 37 40 41 42 31 32 38 39
+
+Buffer Items: 23 24 25 26 28 29 27 30
+Overflow Items: 33 34 35 36 37 40 50 51 52 41 42 48 49 31 32 38 39 43 44 45 46 47
+
+Buffer Items: 29 27 30 31 32 33 34 35
+Overflow Items: 36 37 40 50 51 52 60 61 62 63 64 41 42 48 49 53 54 55 56 38 39 43 44 45 46 47 57 58 59
+
+Buffer Items: 27 30 31 32 33 34 35 36
+Overflow Items: 37 40 50 51 52 60 61 62 63 64 68 69 41 42 48 49 53 54 55 56 65 38 39 43 44 45 46 47 57 58 59 66 67
+
+Buffer Items:
+Overflow Items:
 
 """
 
@@ -51,7 +69,7 @@ def error(i, e_type):
 
 def test(i, data, buffer_size):
     cycles = len(data)
-    command = "./a.out < input_file.txt"
+    command = "./a.out < input.txt"
     output = subprocess.check_output(command, shell=True)
     results = parse(output)
     extra = 0
@@ -119,7 +137,7 @@ for i in range(CASES):
     #     f.write(input_file)
     # with open('input_file.txt', 'w') as f:
     #     f.write(str(buffer_size))
-    with open('input_file.txt', 'w') as f:
+    with open('input.txt', 'w') as f:
         f.write(input_file)
     print("Input File %d generated" % i)
 
