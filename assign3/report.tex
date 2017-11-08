@@ -121,7 +121,7 @@ Similarly, for the second program, the size is 0x172, or 370 bytes. The text seg
 \pagebreak
 \section{Question 2}
 The \texttt{/proc} filesystem contains a map between virtual memory pages and physical memory pages in the \texttt{/proc/\$(PID)/pagemap} file. This map can be used to obtain a mapping from virtual addresses to physical addresses.\\
-We utilize a function found on StackOverflow which reads the \texttt{pagemap} file and carries out the mapping process. This function is based on the \texttt{pagemap} documentation given \href{https://www.kernel.org/doc/Documentation/vm/pagemap.txt}{here}. We describe the function here. \textbf{sudo access is necessary to run this code}.
+We utilize a function found on StackOverflow (\href{https://stackoverflow.com/questions/2440385/how-to-find-the-physical-address-of-a-variable-from-user-space-in-linux}{reference}) which reads the \texttt{pagemap} file and carries out the mapping process. This function is based on the \texttt{pagemap} documentation given \href{https://www.kernel.org/doc/Documentation/vm/pagemap.txt}{here}. We describe the function here. \textbf{sudo access is necessary to run this code}.
 \begin{lstlisting}[language=C]
 FILE *pagemap;
 intptr_t paddr = 0;
