@@ -120,5 +120,45 @@ For the first program, the size is 0x272 bytes, or 626 bytes. The text segment b
 Similarly, for the second program, the size is 0x172, or 370 bytes. The text segment begins at 0x400400 and ends at 0x400574 (exclusive). 2 extra bytes are needed due to alignment.
 \pagebreak
 \section{Question 2}
-The \texttt{/proc} filesystem contains a map between virtual memory pages and physical memory pages in the \texttt{/proc/\$(PID)/pagemap} and \texttt{/proc/\$(PID)/maps} file. This map can be used to obtain a mapping from virtual addresses to physical addresses.
+The \texttt{/proc} filesystem contains a map between virtual memory pages and physical memory pages in the \texttt{/proc/\$(PID)/pagemap} file. This map can be used to obtain a mapping from virtual addresses to physical addresses.\\
+We utilize a function found on StackOverflow which reads the \texttt{pagemap} file and carries out the mapping process. This function is based on the \texttt{pagemap} documentation given \href{https://www.kernel.org/doc/Documentation/vm/pagemap.txt}{here}. We describe the function here. \textbf{sudo access is necessary to run this code}.
+\begin{lstlisting}[language=C]
+FILE *pagemap;
+intptr_t paddr = 0;
+int offset = (vaddr / sysconf(_SC_PAGESIZE)) * sizeof(uint64_t);
+uint64_t e;
+\end{lstlisting}
+\texttt{pagemap} is a reference to the actual file, \texttt{paddr} will store the final physical address. \texttt{offset} refers to the offset within the \texttt{pagemap} file. Each entry is 64 bits long. We need to find the current virtual page number and move to that address.
+\begin{lstlisting}[language=C]
+lseek(fileno(pagemap), offset, SEEK_SET)
+\end{lstlisting}
+Moves the file read pointer to the offset location, the place where the virtual page should be found.
+\begin{lstlisting}[language=C]
+fread(&e, sizeof(uint64_t), 1, pagemap)
+\end{lstlisting}
+64 bits are read into \texttt{e}.
+\begin{lstlisting}[language=C]
+e & (1ULL << 63)
+\end{lstlisting}
+This bitwise operation checks whether the bit 63 is non zero, which indicates the presence of a page. (This is mentioned in \href{https://www.kernel.org/doc/Documentation/vm/pagemap.txt}{Documentation/vm/pagemap.txt}).
+\begin{lstlisting}[language=C]
+paddr = e & ((1ULL << 54) - 1); // pfn mask
+paddr = paddr * sysconf(_SC_PAGESIZE);
+// add offset within page
+paddr = paddr | (vaddr & (sysconf(_SC_PAGESIZE) - 1));
+\end{lstlisting}
+This snippet reads bits 0-53, the location of page frame (again mentioned in \href{https://www.kernel.org/doc/Documentation/vm/pagemap.txt}{Documentation/vm/pagemap.txt}). To get an actual address, it's necessary to multiply this by the page size and add the offset present in the virtual address.
+\subsection{Results}
+Here is a sample output.
+\begin{lstlisting}
+kalpesh@kalpesh-Inspiron-3542:part2$ gcc q2.c 
+kalpesh@kalpesh-Inspiron-3542:part2$ ./a.out 
+Virtual address - 0x601074
+Physical address - (nil)
+kalpesh@kalpesh-Inspiron-3542:part2$ sudo ./a.out 
+Virtual address - 0x601074
+Physical address - 0x68791074
+kalpesh@kalpesh-Inspiron-3542:part2$ 
+\end{lstlisting}
+Here a data segment variable's (initialized with \texttt{static}) pointer is used. Notice that without root access, the function is unable to access the \texttt{pagemap} file.
 \end{document}
