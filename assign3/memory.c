@@ -14,9 +14,9 @@ int main()
     int stack2;
     printf("stack 1 - %p\n", (void *) &stack1);
     printf("stack 2 - %p\n", (void *) &stack2);
-
-    int* heap1 = malloc(sizeof(int));
-    int* heap2 = malloc(sizeof(int));
+    int k = sizeof(int);
+    int* heap1 = malloc(k);
+    int* heap2 = malloc(k);
     printf("heap 1 - %p\n", (void *) heap1);
     printf("heap 2 - %p\n", (void *) heap2);
     printf("heap 1 (pointer) - %p\n", (void *) &heap1);

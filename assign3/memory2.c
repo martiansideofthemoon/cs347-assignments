@@ -18,5 +18,6 @@ int segment7 = 1;
 int segment8 = 2;
 int main()
 {
+    while(1);
     return 0;
 }
